@@ -1,4 +1,4 @@
-import socket,struct,binascii,os
+import socket,struct,binascii,os,sys
 from general import *
 from pcap import Pcap
 from ethernet import Ethernet
@@ -27,11 +27,21 @@ DATA_TAB_4 = '\t\t\t\t   '
 
 pcap = Pcap('capture.pcap')
 
+# Maximum packet read number.
+
+count_pkt = 0
+
+if len(sys.argv) == 1:
+    sys.exit("Have to pass full packet number.")
+else:
+    max_pkt = int(sys.argv[1])
+
 while True:
     pkt, addr = s.recvfrom(65565)
     pcap.write(pkt)
     eth = Ethernet(pkt)
 
+    print("%d's Packet." % count_pkt)
     print('\nEthernet Frame:')
     print(TAB_1 + 'Destination: {}, Source: {}, Protocol: {}'.format(eth.dest_mac, eth.src_mac,
     eth.proto))
@@ -78,6 +88,11 @@ while True:
             print(TAB_1 + 'UDP Segment:')
             print(TAB_2 + 'Source Port: {}, Destination Port: {}, Length: {}'.format(udp.src_port,
             udp.dest_port, udp.size))
+
+    if count_pkt >= max_pkt:
+        break
+    else:
+        count_pkt += 1
 
 pcap.close()
 
