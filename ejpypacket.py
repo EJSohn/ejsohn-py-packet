@@ -1,4 +1,4 @@
-import socket,struct,binascii,os,sys
+import socket,struct,binascii,os,sys, time
 from general import *
 from pcap import Pcap
 from ethernet import Ethernet
@@ -40,9 +40,12 @@ while True:
     pkt, addr = s.recvfrom(65565)
     pcap.write(pkt)
     eth = Ethernet(pkt)
+    t = time.localtime()
 
     print("%d's Packet." % count_pkt)
-    print('\nEthernet Frame:')
+    print('Time: {}.{}.{}, {}.{}.{}'.format(t.tm_mon, t.tm_mday, t.tm_year, t.tm_hour, t.tm_min,
+    t.tm_sec))
+    print('Ethernet Frame:')
     print(TAB_1 + 'Destination: {}, Source: {}, Protocol: {}'.format(eth.dest_mac, eth.src_mac,
     eth.proto))
 
